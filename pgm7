@@ -153,4 +153,16 @@ MariaDB [db1]> select * from book where price between 600 and 800;
 
 
 
+MariaDB [db1]> select * from author order by aname desc;
++-----+--------+-------------+------------+
+| aid | aname  | city        | country    |
++-----+--------+-------------+------------+
+|   3 | Roshan | Chennai     | Tamilnadu  |
+|   1 | Devika | Ernakulam   | Kerala     |
+|   4 | Arthur | BakerStreet | London     |
+|   2 | Anjaly | Dehradun    | Uttarkhand |
++-----+--------+-------------+------------+
+4 rows in set (0.01 sec)
+
+
 
