@@ -1,0 +1,156 @@
+MariaDB [db1]> create table author(aid int primary key, aname  varchar(20),city varchar(20),country varchar(30));
+Query OK, 0 rows affected (0.26 sec)
+
+MariaDB [db1]> create table publisher(pid int primary key, pname  varchar(20),city varchar(20),country varchar(30));
+Query OK, 0 rows affected (0.24 sec)
+
+MariaDB [db1]> create table category(cid int primary key, description varchar(30));
+Query OK, 0 rows affected (0.24 sec)
+
+MariaDB [db1]> create table book(bid int, tittle varchar(30),aid int references author,pid int references publisher,cid int references category,year int,price int);
+Query OK, 0 rows affected (0.45 sec)
+
+
+
+MariaDB [db1]> insert into author value(1,'Devika','Ernakulam','Kerala');
+Query OK, 1 row affected (0.04 sec)
+MariaDB [db1]> insert into author value(2,'Anjaly','Dehradun','Uttarkhand');
+Query OK, 1 row affected (0.04 sec)
+
+MariaDB [db1]> insert into author value(3,'Roshan','Chennai','Tamilnadu');
+Query OK, 1 row affected (0.04 sec)
+insert into author values(4,'Arthur','BakerStreet','London');
+Query OK, 1 row affected (0.03 sec)
+
+
+
+
+MariaDB [db1]> insert into publisher values(101,'Designer Publications','Kochi','kerala');
+Query OK, 1 row affected, 1 warning (0.03 sec)
+
+MariaDB [db1]> insert into publisher values(102,'Asad Publications','Mumbai','Maharashtra');
+Query OK, 1 row affected (0.04 sec)
+
+MariaDB [db1]> insert into publisher values(103,'TL Publications','Banglore','Karnataka');
+Query OK, 1 row affected (0.04 sec)
+
+MariaDB [db1]> insert into publisher values(104,'DC Books','Trivandrum','Kerala');
+Query OK, 1 row affected (0.04 sec)
+
+
+
+
+MariaDB [db1]> insert into category values(200,'Horror Stories');
+Query OK, 1 row affected (0.03 sec)
+
+MariaDB [db1]> insert into category values(201,'Comic Books');
+Query OK, 1 row affected (0.04 sec)
+MariaDB [db1]> insert into category values(202,'Biography Books');
+Query OK, 1 row affected (0.03 sec)
+MariaDB [db1]> insert into category values(204,'Fiction Books');
+Query OK, 1 row affected (0.03 sec)
+
+
+
+MariaDB [db1]> insert into book values(1001,'Drakula',3,103,200,1996,605);
+Query OK, 1 row affected (0.03 sec)
+
+MariaDB [db1]> insert into book values(1002,'Birth Place',2,101,204,1997,700);
+Query OK, 1 row affected (0.02 sec)
+
+MariaDB [db1]> insert into book values(1003,'Ikigai',1,102,201,1998,850);
+Query OK, 1 row affected (0.04 sec)
+MariaDB [db1]> insert into book values(1004,'Sherlock Holmes',4,104,202,1991,499);
+Query OK, 1 row affected (0.03 sec)
+
+
+Alter table book modify bid int primary key;
+
+
+
+MariaDB [db1]> select * from book;
++------+-----------------+------+------+------+------+-------+
+| bid  | tittle          | aid  | pid  | cid  | year | price |
++------+-----------------+------+------+------+------+-------+
+| 1001 | Drakula         |    3 |  103 |  200 | 1996 |   605 |
+| 1002 | Birth Place     |    2 |  101 |  204 | 1997 |   700 |
+| 1003 | Ikigai          |    1 |  102 |  201 | 1998 |   850 |
+| 1004 | Sherlock Holmes |    4 |  104 |  202 | 1991 |   499 |
++------+-----------------+------+------+------+------+-------+
+4 rows in set (0.00 sec)
+
+
+
+MariaDB [db1]> select bid,tittle,price from book;
++------+-----------------+-------+
+| bid  | tittle          | price |
++------+-----------------+-------+
+| 1001 | Drakula         |   605 |
+| 1002 | Birth Place     |   700 |
+| 1003 | Ikigai          |   850 |
+| 1004 | Sherlock Holmes |   499 |
++------+-----------------+-------+
+4 rows in set (0.00 sec)
+
+
+
+MariaDB [db1]> select tittle from book where price>500;
++-------------+
+| tittle      |
++-------------+
+| Drakula     |
+| Birth Place |
+| Ikigai      |
++-------------+
+3 rows in set (0.00 sec)
+
+
+
+
+
+MariaDB [db1]> select tittle from book where cid in(select cid from category where description!='Fiction Books');
++-----------------+
+| tittle          |
++-----------------+
+| Drakula         |
+| Ikigai          |
+| Sherlock Holmes |
++-----------------+
+3 rows in set (0.00 sec)
+
+
+
+MariaDB [db1]> select * from book where tittle like 'B%';
++------+-------------+------+------+------+------+-------+
+| bid  | tittle      | aid  | pid  | cid  | year | price |
++------+-------------+------+------+------+------+-------+
+| 1002 | Birth Place |    2 |  101 |  204 | 1997 |   700 |
++------+-------------+------+------+------+------+-------+
+1 row in set (0.00 sec)
+
+
+
+MariaDB [db1]> select tittle,author.aname,publisher.pname from book left join author on author.aid=book.aid left join publisher on publisher.pid=book.pid where year in(1996,1997,1998);
++-------------+--------+----------------------+
+| tittle      | aname  | pname                |
++-------------+--------+----------------------+
+| Drakula     | Roshan | TL Publications      |
+| Birth Place | Anjaly | Designer Publication |
+| Ikigai      | Devika | Asad Publications    |
++-------------+--------+----------------------+
+3 rows in set (0.00 sec)
+
+
+MariaDB [db1]> select * from book where price between 600 and 800;
++------+-------------+------+------+------+------+-------+
+| bid  | tittle      | aid  | pid  | cid  | year | price |
++------+-------------+------+------+------+------+-------+
+| 1001 | Drakula     |    3 |  103 |  200 | 1996 |   605 |
+| 1002 | Birth Place |    2 |  101 |  204 | 1997 |   700 |
++------+-------------+------+------+------+------+-------+
+2 rows in set (0.00 sec)
+
+
+
+
+
